@@ -1,4 +1,5 @@
 .env
+_backup
 # Logs
 logs
 *.log
