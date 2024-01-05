@@ -1,0 +1,47 @@
+services:
+  api:
+    image: NEEDS IMAGE WITH :latest
+    ports:
+      - 8080:3000
+    volumes:
+      - ./images/api/src:/usr/src/app
+    environment:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+      POSTGRES_HOST: db
+      PG_CONNECTION_STRING: "postgress://${POSTGRESS_USER}:${POSTGRESS_PASSWORD}:${POSTGRESS_DB}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16.0
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+      POSTGRES_HOST_AUTH_METHOD:
+
+
+    volumes:
+      - ./_backup:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $POSTGRESS_USER -d POSTGRESS_DB"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  watchtower:
+    image: containerrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_POLL_INTERVAL: 10
