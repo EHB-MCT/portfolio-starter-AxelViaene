@@ -7,6 +7,8 @@ app.use(express.json());
 
 const db = require('../db/database.js')
 
+const {checkUserName} = require("./helpers/endpointHelpers.js")
+
 /* 
 GET endpoint, displays all users from table 'users'
 */
@@ -62,6 +64,7 @@ app.post('/add_user', (req, res) => {
     // SQL query to insert a new user into the "users" table
     const sqlQuery = 'INSERT INTO users (user_id, user_name, user_password) VALUES (?, ?, ?)';
 
+    if(checkUserName(user_name)){
     // Execute the SQL query
     db.query( sqlQuery, [user_id, user_name, user_password], function (err, result) {
       if (err) {
@@ -75,7 +78,10 @@ app.post('/add_user', (req, res) => {
         user_id,
         user_name,
         user_password });
-    });
+    })}
+    else {
+      res.status(401).send({message: "Name not formatted properly."})
+    }
 });
 
 /* 

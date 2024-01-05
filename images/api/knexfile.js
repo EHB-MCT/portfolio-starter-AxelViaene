@@ -5,6 +5,8 @@ module.exports = {
       user: 'root',
       password: '',
       database: 'final work test',
+      //look up how next line works, I can't give these credentials
+      //.env.POSTGRESS
     },
     migrations: {
       tableName: 'knex_migrations',
